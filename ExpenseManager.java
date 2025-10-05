@@ -13,34 +13,34 @@ public class ExpenseManager {
     public static void main(String [] args) {
         System.out.println("Welcome.");
         while (!shouldExit) {
-            SelectOption();
+            selectOption();
         }
 
         System.out.println("Goodbye.");
     }
 
-    private static void SelectOption() {
+    private static void selectOption() {
         // this method gives the user a list of actions and calls the corresponding method //
 
-        String option = GetValidString("How would you like to manage your expenses?", "add", "remove", "view", "exit");
+        String option = setValidString("How would you like to manage your expenses?", "add", "remove", "view", "exit");
 
         switch (option) {
-            case "add": AddExpense(); break;
-            case "remove": RemoveExpense(); break;
-            case "view": ViewExpense(); break;
+            case "add": addExpense(); break;
+            case "remove": removeExpense(); break;
+            case "view": viewExpense(); break;
             case "exit": shouldExit = true; break;
             //case "random": AddDebugValueToExpenses();
         }
     }
 
-    private static void AddExpense() {
+    private static void addExpense() {
         // this method gets information about the expense, and adds it to the list
         
-        String desc = GetNonNullString("What is the description of your expenses? ");
+        String desc = getNonNullString("What is the description of your expenses? ");
 
-        float amount = GetValidInt("What is the amount? $", 0, Integer.MAX_VALUE);
+        float amount = getValidInt("What is the amount? $", 0, Integer.MAX_VALUE);
 
-        Calendar date = GetValidDate("What is the date?");
+        Calendar date = getValidDate("What is the date?");
 
         System.out.print("What is the category? ");
         //if the category list is not empty, show it to the user
@@ -49,7 +49,7 @@ public class ExpenseManager {
         }
 
         //get the new category name
-        String category = GetNonNullString("");
+        String category = getNonNullString("");
         
         //add a comma to the end of the list if it is not empty, then add the category to categoryList if it is new
         if (!categoryList.contains(category)) {
@@ -64,7 +64,7 @@ public class ExpenseManager {
         System.out.println("The expense was added.");
     }
 
-    private static void RemoveExpense() {
+    private static void removeExpense() {
         // this method shows a list of the expenses' desccriptions, asks the user which expense they wish to remove, and removes it //
 
         if (expenses.isEmpty()) {
@@ -87,12 +87,12 @@ public class ExpenseManager {
         }
 
         System.out.println(""); //empty line
-        int indexToRemove = GetValidInt("What is the index of the expense you would like to remove?: ", 1, expenses.size());
+        int indexToRemove = getValidInt("What is the index of the expense you would like to remove?: ", 1, expenses.size());
         expenses.remove(indexToRemove - 1); //the list of indexes for the user begins with 1 since that is more intuative, but the computer's list begins with 0
         System.out.println("The expense was removed.");
     }
 
-    private static void ViewExpense() {
+    private static void viewExpense() {
         // this method asks the user for a time frame and prints all expenses within it //
 
         if (expenses.isEmpty()) {
@@ -105,7 +105,7 @@ public class ExpenseManager {
         Calendar minDate = Calendar.getInstance();
         Calendar maxDate = Calendar.getInstance();
 
-        String period = GetValidString("What period of time would you like to view the expenses for?", "all", "month", "week", "custom");
+        String period = getValidString("What period of time would you like to view the expenses for?", "all", "month", "week", "custom");
 
         switch (period) {
             case "all":
@@ -125,8 +125,8 @@ public class ExpenseManager {
                 break;
             case "custom":
                 //ask the user for the minimum and maximum dates
-                minDate = GetValidDate("What is the minimum date of the custom time period?");
-                maxDate = GetValidDate("What is the maximum date?");
+                minDate = getValidDate("What is the minimum date of the custom time period?");
+                maxDate = getValidDate("What is the maximum date?");
 
                 //convert the min and max dates to strings
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -139,12 +139,12 @@ public class ExpenseManager {
         //print the expenses between the specified dates
         for (Expense e: expenses) {
             if (e.date.after(minDate) && maxDate.after(e.date)) {
-                e.ToString();
+                e.toString();
             }
         }
     }
     
-    private static Calendar GetValidDate(String message) {
+    private static Calendar getValidDate(String message) {
         // this method reads input, ensures that it can be converted to a Calendar object, and returns it //
 
         //get valid input
@@ -152,7 +152,7 @@ public class ExpenseManager {
         do {
             System.out.print(message + " (formatted as MM/DD/YYYY): ");
             dateStr = input.nextLine();
-        } while (!IsDateFormattingValid(dateStr));
+        } while (!isDateFormattingValid(dateStr));
 
         //create and return Calendar
         Calendar date = Calendar.getInstance();
@@ -160,7 +160,7 @@ public class ExpenseManager {
         return date;
     }
 
-    private static String GetValidString(String message, String... choices) {
+    private static String getValidString(String message, String... choices) {
         // this method gets input, ensures that it is included in the list of choices, and returns it //
 
         boolean isValid;
@@ -195,7 +195,7 @@ public class ExpenseManager {
         return response;
     }
 
-    private static String GetNonNullString(String message) {
+    private static String getNonNullString(String message) {
         // this method gets input, ensures that it is not null or empty, and returns it //
 
         boolean isValid;
@@ -214,7 +214,7 @@ public class ExpenseManager {
         return response;
     }
 
-    private static int GetValidInt(String message, int minSize, int maxSize) {
+    private static int getValidInt(String message, int minSize, int maxSize) {
         // this method gets input, ensures that it is a non-negative number, and returns it //
 
         int integer = -1;
@@ -248,13 +248,13 @@ public class ExpenseManager {
         return integer;
     }
 
-    private static boolean IsDateFormattingValid(String date) {
+    private static boolean isDateFormattingValid(String date) {
         // this method checks whether the given String is a valid date //
 
         //check that the input isn't null.
         if(date.equals("")) {
             //there is no need for a specific error message since the default gives the user all the information they need
-            PrintErrorMessages();
+            printErrorMessages();
             return false;
         }
 
@@ -262,7 +262,7 @@ public class ExpenseManager {
         if (date.length() != 10 || !date.substring(2,3).equals("/") || !date.substring(5,6).equals("/")) {
             //the length is checked first so the indexes for the substring will not be out of bounds
             System.out.println("Error: The date is missing one or both slashes or the month, day, or year have been formatted with the incorrect number of characters.");
-            PrintErrorMessages();
+            printErrorMessages();
             return false;
         }
 
@@ -282,7 +282,7 @@ public class ExpenseManager {
                 System.out.println("Error: This expense tracker does not account for dates before the common era. Please enter a non-negative year.");
             }
             else if (month == 2 && day == 29) {
-                boolean isLeapYear = GetValidString("Was the year " + year + " a leap year?", "yes", "no").equals("yes");
+                boolean isLeapYear = getValidString("Was the year " + year + " a leap year?", "yes", "no").equals("yes");
                 if (isLeapYear) {
                     return true;
                 }
@@ -301,16 +301,16 @@ public class ExpenseManager {
         }
 
         // print error messages if one of the if-statements was true (except if the date is the 29th of February during a leap year)
-        PrintErrorMessages();
+        printErrorMessages();
         return false;
     }
 
-    private static void PrintErrorMessages() {
+    private static void printErrorMessages() {
         System.out.println("Please enter the date as two digits for the month, then a slash (/), two digits for the day, another slash, and four digits for the year.");
         System.out.println("Example: September 28th, 2025 should be formatted as 09/28/2025.");
     }
 
-    /* private static void AddDebugValueToExpenses() {
+    /* private static void addDebugValueToExpenses() {
         //used for debugging ViewExpense()
 
         Calendar date = Calendar.getInstance();
@@ -338,8 +338,9 @@ class Expense {
         this.category = category;
     }
 
-    void ToString() {
+    void toString() {
         String dateStr = new SimpleDateFormat("MM/dd/yyyy").format(date.getTime());
         System.out.printf("Description: %s, amount: %.2f, date: %s, category: %s %n", description, amount, dateStr, category);
     }
+
 }
